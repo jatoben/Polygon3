@@ -939,10 +939,12 @@ static PyObject *Polygon_covers(Polygon *self, Polygon *other) {
         Py_RETURN_FALSE;
     /* still there? Let's do the full test... */  
     if (! (pres = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     gpc_polygon_clip(GPC_DIFF, other->gpc_p, self->gpc_p, pres);
     r = pres->num_contours;
     gpc_free_polygon(pres);
     free(pres);
+    Py_END_ALLOW_THREADS
     if (r > 0)
         Py_RETURN_FALSE;
     else
@@ -971,10 +973,12 @@ static PyObject *Polygon_overlaps(Polygon *self, Polygon *other) {
         Py_RETURN_FALSE;
     /* still there? Let's do the full test... */
     if (! (pres = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     gpc_polygon_clip(GPC_INT, other->gpc_p, self->gpc_p, pres);
     r = pres->num_contours;
     gpc_free_polygon(pres);
     free(pres);
+    Py_END_ALLOW_THREADS
     if (r > 0)
         Py_RETURN_TRUE;
     else
@@ -1167,7 +1171,9 @@ static PyObject *Polygon_opDiff(Polygon *self, Polygon *other) {
     gpc_polygon *ret;
     if (! Polygon_Check(other)) return Polygon_Raise(ERR_TYP);
     if (! (ret = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     gpc_polygon_clip(GPC_DIFF, self->gpc_p, other->gpc_p, ret);
+    Py_END_ALLOW_THREADS
     return (PyObject *)Polygon_NEW(ret);
 }
 
@@ -1176,7 +1182,9 @@ static PyObject *Polygon_opUnion(Polygon *self, Polygon *other) {
     gpc_polygon *ret;
     if (! Polygon_Check(other)) return Polygon_Raise(ERR_TYP);
     if (! (ret = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     gpc_polygon_clip(GPC_UNION, self->gpc_p, other->gpc_p, ret);
+    Py_END_ALLOW_THREADS
     return (PyObject *)Polygon_NEW(ret);
 }
 
@@ -1185,7 +1193,9 @@ static PyObject *Polygon_opXor(Polygon *self, Polygon *other) {
     gpc_polygon *ret;
     if (! Polygon_Check(other)) return Polygon_Raise(ERR_TYP);
     if (! (ret = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     gpc_polygon_clip(GPC_XOR, self->gpc_p, other->gpc_p, ret);
+    Py_END_ALLOW_THREADS
     return (PyObject *)Polygon_NEW(ret);
 }
 
@@ -1194,7 +1204,9 @@ static PyObject *Polygon_opInt(Polygon *self, Polygon *other) {
     gpc_polygon *ret;
     if (! Polygon_Check(other)) return Polygon_Raise(ERR_TYP);
     if (! (ret = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     gpc_polygon_clip(GPC_INT, self->gpc_p, other->gpc_p, ret);
+    Py_END_ALLOW_THREADS
     return (PyObject *)Polygon_NEW(ret);
 }
 
