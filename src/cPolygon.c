@@ -257,8 +257,10 @@ static PyObject *Polygon_addContour(Polygon *self, PyObject *args) {
     }
     Py_DECREF(flist);
 #endif /* WITH_NUMPY */
+    Py_BEGIN_ALLOW_THREADS
     gpc_add_contour(self->gpc_p, vl, hole);
     self->bbValid = 0;
+    Py_END_ALLOW_THREADS
     PyMem_Free(vl->vertex);
     PyMem_Free(vl);
     Py_RETURN_NONE;
@@ -445,6 +447,7 @@ static PyObject *Polygon_simplify(Polygon *self, PyObject *args) {
     if (! (lop = poly_p_new())) return Polygon_Raise(ERR_MEM);
     if (! (rop = poly_p_new())) return Polygon_Raise(ERR_MEM);
     if (! (ret = poly_p_new())) return Polygon_Raise(ERR_MEM);
+    Py_BEGIN_ALLOW_THREADS
     /* find first contour which is not a hole */
     i = 0;
     while ((i < p->num_contours) && (p->hole[i] == 1))
@@ -483,6 +486,7 @@ static PyObject *Polygon_simplify(Polygon *self, PyObject *args) {
     gpc_free_polygon(rop);
     free(rop);
     self->bbValid = 0;
+    Py_END_ALLOW_THREADS
     Py_RETURN_NONE;
 }
 
